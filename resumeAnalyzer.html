@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      background: #f7f9fb;
+      max-width: 800px;
+      margin: auto;
+    }
+    h2 {
+      color: #333;
+    }
+    .box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: inherit;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 15px 0;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    pre {
+      background: #eee;
+      padding: 20px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Resume & Job Description Analyzer</h2>
+
+  <form id="resume-form" action="https://resume-analyzer-proxy.onrender.com/proxy" method="POST" enctype="multipart/form-data">
+    <label for="resume">Upload PDF Resume:</label>
+    <input type="file" id="resume" accept="application/pdf" required />
+
+    <label for="job-desc">Paste Job Description:</label>
+    <textarea id="job-desc" placeholder="Paste the full job description here..." required></textarea>
+
+    <button type="submit">Analyze</button>
+  </form>
+
+  <div id="result-box" class="box" style="display:none;">
+    <h3>Analysis Result</h3>
+    <pre id="result"></pre>
+  </div>
+
+  <script>
+    const form = document.getElementById('resume-form');
+    const resultBox = document.getElementById('result-box');
+    const resultPre = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const file = document.getElementById('resume').files[0];
+      const jobDesc = document.getElementById('job-desc').value;
+
+      if (!file || !jobDesc.trim()) {
+        alert('Please provide both resume and job description.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('job_description', jobDesc);
+
+      try {
+        const response = await fetch('https://irfanm06.app.n8n.cloud/webhook/analyze-resume', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+        resultPre.textContent = JSON.stringify(result, null, 2);
+        resultBox.style.display = 'block';
+      } catch (err) {
+        resultPre.textContent = `Error: ${err.message}`;
+        resultBox.style.display = 'block';
+      }
+    });
+  </script>
+
+</body>
+</html>
