@@ -87,8 +87,8 @@
       }
 
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('job_description', jobDesc);
+      formData.append('resume', file);
+      formData.append('jobDescription', jobDesc);
 
       try {
         const response = await fetch('https://resumeanallyzer.onrender.com/proxy', {
