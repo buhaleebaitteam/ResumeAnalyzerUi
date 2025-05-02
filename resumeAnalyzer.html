@@ -57,7 +57,7 @@
 
   <form id="resume-form"  method="POST" enctype="multipart/form-data">
     <label for="resume">Upload PDF Resume:</label>
-    <input type="file" id="resume" name="resume" accept="application/pdf" required />
+    <input type="file" id="resume" name="resume" accept="application/pdf" multiple required />
 
     <label for="job-desc">Paste Job Description:</label>
     <textarea id="job-desc" placeholder="Paste the full job description here..." required></textarea>
@@ -78,16 +78,18 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const file = document.getElementById('resume').files[0];
+      const files = document.getElementById('resume').files;
       const jobDesc = document.getElementById('job-desc').value;
 
-      if (!file || !jobDesc.trim()) {
-        alert('Please provide both resume and job description.');
+      if (!files.length || !jobDesc.trim()) {
+        alert('Please provide at least one resume and job description.');
         return;
       }
 
       const formData = new FormData();
-      formData.append('resume', file);
+      Array.from(files).forEach((file, index) => {
+        formData.append(`resume_${index}`, file);
+      });
       formData.append('jobDescription', jobDesc);
 
       try {
